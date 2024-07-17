@@ -4,10 +4,10 @@
 void topologicalSort(int **a, int n) {
     int indegree[n], s[n], top = -1, T[n], k = 0;
 
-    for (int j = 0; j < n; j++) {
-        indegree[j] = 0;
-        for (int i = 0; i < n; i++) {
-            indegree[j] += a[i][j];
+    for (int i = 0; i < n; i++) {
+        indegree[i] = 0;
+        for (int j = 0; j < n; j++) {
+            indegree[i] += a[j][i];
         }
     }
 

@@ -1,75 +1,66 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 
-#define MAX_VERTICES 100
-#define INF INT_MAX // Infinity
-
-int minKey(int n, int d[], int s[]) {
-    int min = INF, min_index;
-
-    for (int v = 0; v < n; v++) {
-        if (s[v] == 0 && d[v] < min) {
-            min = d[v];
-            min_index = v;
-        }
-    }
-
-    return min_index;
-}
-
-int printMST(int n, int p[], int cost[MAX_VERTICES][MAX_VERTICES]) {
-    int total_cost = 0;
-    printf("Edge   Weight\n");
-    for (int i = 1; i < n; i++) {
-        printf("%d - %d    %d \n", p[i], i, cost[i][p[i]]);
-        total_cost += cost[i][p[i]];
-    }
-    return total_cost;
-}
-
-void primMST(int n, int cost[MAX_VERTICES][MAX_VERTICES]) {
-    int p[MAX_VERTICES];
-    int d[MAX_VERTICES];
-    int s[MAX_VERTICES];
-
-    for (int i = 0; i < n; i++) {
-        d[i] = INF;
-        s[i] = 0;
-    }
-
-    d[0] = 0;
-    p[0] = -1;
-
-    for (int count = 0; count < n - 1; count++) {
-        int u = minKey(n, d, s);
-        s[u] = 1;
-        for (int v = 0; v < n; v++) {
-            if (cost[u][v] && s[v] == 0 && cost[u][v] < d[v]) {
-                p[v] = u;
-                d[v] = cost[u][v];
-            }
-        }
-    }
-    int total_cost = printMST(n, p, cost);
-    printf("Total cost of Minimum Spanning Tree (MST): %d\n", total_cost);
-}
-
-int main() {
+void main(){
+    printf("Enter number of vertices: ");
     int n;
-    int cost[MAX_VERTICES][MAX_VERTICES];
-    printf("Enter number of vertices (max %d): ", MAX_VERTICES);
     scanf("%d", &n);
-    printf("Enter the cost adjacency matrix (use %d for infinity):\n", INF);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    int cost[n][n];
+    printf("Enter cost adjacency matrix: ");
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
             scanf("%d", &cost[i][j]);
-            if (cost[i][j] == 0 && i != j) {
-                cost[i][j] = INF;
+        }
+    }
+    int min = INT_MAX, source = 0;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(cost[i][j] != 0 && cost[i][j] < min){
+                min = cost[i][j];
+                source = i;
             }
         }
     }
-    printf("Minimum Spanning Tree (MST) using Prim's algorithm:\n");
-    primMST(n, cost);
+    int s[n], d[n], p[n];
+    for(int i = 0; i < n; i++){
+        s[i] = 0;
+        d[i] = cost[source][i];
+        p[i] = source;
+    }
+    s[source] = 1;
+    int sum = 0, k = 0, t[n][2];
+    for(int i = 0; i < n; i++){
+        min = INT_MAX;
+        int u = -1;
+        for(int j = 0; j < n; j++){
+            if(s[j] == 0 && d[j] <= min){
+                min = d[j];
+                u = j;
+            }
+        }
+        if (u == -1) break;
 
-    return 0;
+        t[k][0] = u;
+        t[k][1] = p[u];
+        k++;
+        sum += cost[u][p[u]];
+        s[u] = 1;
+        for(int j = 0; j < n; j++){
+            if(s[j] == 0 && cost[u][j] < d[j]){
+                d[j] = cost[u][j];
+                p[j] = u;
+            }
+        }
+    }
+    if(sum >= INT_MAX){
+        printf("Spanning tree does not exist");
+    }
+    else{
+        printf("MST is:\n");
+        for(int i = 0; i < k; i++){
+            printf("(%d, %d) ", t[i][0] + 1, t[i][1] + 1);
+        }
+        printf("\nThe cost of MST is %d", sum);
+    }
 }

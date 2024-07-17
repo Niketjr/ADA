@@ -10,19 +10,19 @@ void knapsack(int n, int W, int weights[], int profits[]) {
     int K[MAX_OBJECTS + 1][W + 1];
 
     for (i = 0; i <= n; i++) {
-        for (w = 0; w <= W; w++) {
-            if (i == 0 || w == 0)
-                K[i][w] = 0;
-            else if (weights[i-1] <= w)
-                K[i][w] = max(profits[i - 1] + K[i - 1][w - weights[i - 1]], K[i - 1][w]);
+        for (int j = 0; j <= W; j++) {
+            if (i == 0 || j == 0)
+                K[i][j] = 0;
+            else if (weights[i-1] <= j)
+                K[i][j] = max(profits[i - 1] + K[i - 1][j - weights[i - 1]], K[i - 1][j]);
             else
-                K[i][w] = K[i-1][w];
+                K[i][j] = K[i-1][j];
         }
     }
 
     for (i = 0; i <= n; i++) {
-        for (w = 0; w <= W; w++) {
-            printf("%d\t",K[i][w]);
+        for (int j = 0; j <= W; j++) {
+            printf("%d\t",K[i][j]);
         }
         printf("\n");
     }

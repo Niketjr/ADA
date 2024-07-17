@@ -3,12 +3,9 @@
 struct Item {
     int value;
     int weight;
+    double ratio;
 };
-int compare(const void *a, const void *b) {
-    double ratio1 = (double)(((struct Item *)a)->value) / (((struct Item *)a)->weight);
-    double ratio2 = (double)(((struct Item *)b)->value) / (((struct Item *)b)->weight);
-    return (ratio2 > ratio1) - (ratio2 < ratio1);
-}
+
 int main() {
     int n;
     printf("Enter number of items: ");
@@ -18,11 +15,22 @@ int main() {
     for (int i = 0; i < n; i++) {
         printf("Item %d: ", i + 1);
         scanf("%d %d", &items[i].value, &items[i].weight);
+        items[i].ratio=items[i].value/items[i].weight;
     }
     int W;
+    struct Item temp;
     printf("Enter capacity of knapsack: ");
     scanf("%d", &W);
-    qsort(items, n, sizeof(items[0]), compare);
+    for(int i=0;i<n;i++){
+        for(int j=i+1;j<n;j++){
+            if(items[i].ratio<items[j].ratio){
+                temp=items[j];
+                items[j]=items[i];
+                items[i]=temp;
+            }
+        }
+    }
+    
     int currentWeight = 0;
     double finalValue = 0.0;
     for (int i = 0; i < n; i++) {
